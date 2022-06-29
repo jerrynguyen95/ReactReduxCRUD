@@ -1,67 +1,63 @@
-import React, { Component } from "react";
-import TutorialDataService from "../services/tutorial.service";
+import React, {useState} from "react";
 import store from '../redux/store';
-import { Redirect } from "react-router-dom";
+import {useHistory} from 'react-router-dom';
 
-export default class AddTutorial extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.onChangeDescription = this.onChangeDescription.bind(this);
-    this.onChangeDescription1 = this.onChangeDescription1.bind(this);
-    this.onChangeDescription2 = this.onChangeDescription2.bind(this);
-    this.onChangeDescription3 = this.onChangeDescription3.bind(this);
-    this.saveTutorial = this.saveTutorial.bind(this);
-    this.newTutorial = this.newTutorial.bind(this);
+const AddTutorial = ({
+}) => {
+  const history = useHistory();
 
-    this.state = {
-      id: null,
-      title: "",
-      description: "",
-      watchers_count: "",
-      open_issues: "",
-      private: false,
-      published: false,
-      redirect: null,
-      submitted: false
-    };
-  }
+  const [state, setState] = useState({
+    id: null,
+    title: "",
+    description: "",
+    watchers_count: "",
+    open_issues: "",
+    private: false,
+    published: false,
+    redirect: null,
+    submitted: false
+  });
 
-  onChangeTitle(e) {
-    this.setState({
+  const onChangeTitle =(e) => {
+    setState({
+      ...state,
       title: e.target.value
     });
   }
 
-  onChangeDescription(e) {
-    this.setState({
+  const onChangeDescription = (e) => {
+    setState({
+      ...state,
       description: e.target.value
     });
   }
-  onChangeDescription1(e) {
-    this.setState({
+  const onChangeDescription1 = (e) => {
+    setState({
+      ...state,
       watchers_count: e.target.value
     });
   }
-  onChangeDescription2(e) {
-    this.setState({
+  const onChangeDescription2 = (e) => {
+    setState({
+      ...state,
       open_issues: e.target.value
     });
   }
-  onChangeDescription3(e) {
-    this.setState({
+  const onChangeDescription3 = (e) => {
+    setState({
+      ...state,
       private: e.target.value
     });
   }
 
-  saveTutorial() {
+  const saveTutorial = () => {
     var data = {
       id: Math.random(),
-      name: this.state.title,
-      description: this.state.description,
-      watchers_count: this.state.watchers_count,
-      open_issues: this.state.open_issues,
-      private: this.state.private
+      name: state.title,
+      description: state.description,
+      watchers_count: state.watchers_count,
+      open_issues: state.open_issues,
+      private: state.private
     };
 
     store.dispatch({
@@ -73,13 +69,11 @@ export default class AddTutorial extends Component {
       }
     });
 
-    this.setState({
-      redirect: "/"
-    });
+    history.goBack();
   }
 
-  newTutorial() {
-    this.setState({
+  const newTutorial = () => {
+    setState({
       id: null,
       title: "",
       description: "",
@@ -92,17 +86,12 @@ export default class AddTutorial extends Component {
     });
   }
 
-  render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />
-    }
-
     return (
       <div className="submit-form">
-        {this.state.submitted ? (
+        {state.submitted ? (
           <div>
             <h4>You submitted successfully!</h4>
-            <button className="btn btn-success" onClick={this.newTutorial}>
+            <button className="btn btn-success" onClick={newTutorial}>
               Add
             </button>
           </div>
@@ -115,8 +104,8 @@ export default class AddTutorial extends Component {
                 className="form-control"
                 id="title"
                 required
-                value={this.state.title}
-                onChange={this.onChangeTitle}
+                value={state.title}
+                onChange={onChangeTitle}
                 name="title"
               />
             </div>
@@ -129,8 +118,8 @@ export default class AddTutorial extends Component {
                 className="form-control"
                 id="description"
                 required
-                value={this.state.description}
-                onChange={this.onChangeDescription}
+                value={state.description}
+                onChange={onChangeDescription}
                 name="description"
               />
             </div>
@@ -141,8 +130,8 @@ export default class AddTutorial extends Component {
                   className="form-control"
                   id="description"
                   required
-                  value={this.state.watchers_count}
-                  onChange={this.onChangeDescription1}
+                  value={state.watchers_count}
+                  onChange={onChangeDescription1}
                   name="description"
               />
             </div>
@@ -153,8 +142,8 @@ export default class AddTutorial extends Component {
                   className="form-control"
                   id="description"
                   required
-                  value={this.state.open_issues}
-                  onChange={this.onChangeDescription2}
+                  value={state.open_issues}
+                  onChange={onChangeDescription2}
                   name="description"
               />
             </div>
@@ -165,18 +154,19 @@ export default class AddTutorial extends Component {
                   className="form-control"
                   id="description"
                   required
-                  value={this.state.private}
-                  onChange={this.onChangeDescription3}
+                  value={state.private}
+                  onChange={onChangeDescription3}
                   name="description"
               />
             </div>
 
-            <button onClick={this.saveTutorial} className="btn btn-success">
+            <button onClick={saveTutorial} className="btn btn-success">
               Submit
             </button>
           </div>
         )}
       </div>
     );
-  }
-}
+};
+
+export default AddTutorial;

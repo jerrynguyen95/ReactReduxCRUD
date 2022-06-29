@@ -1,34 +1,24 @@
-import React, { Component } from "react";
+import React, {Component, useEffect, useState} from "react";
 import TutorialDataService from "../services/tutorial.service";
+import store from "../redux/store";
 
-export default class Tutorial extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangeTitle = this.onChangeTitle;
-    this.onChangeDescription = this.onChangeDescription;
-    this.getTutorial = this.getTutorial;
-    this.updatePublished = this.updatePublished;
-    this.updateTutorial = this.updateTutorial;
-    this.deleteTutorial = this.deleteTutorial;
+const Tutorial = ({
+}) => {
 
-    this.state = {
-      currentTutorial: {
+  const [currentTutorial, setCurrentTutorial] = useState({
         id: null,
         name: "",
         appearance: {weight: []},
         image: {
           url: ''
         }
-      },
-      message: ""
-    };
-  }
+      });
 
-  componentDidMount = () => {
+  useEffect( () => {
     this.getTutorial(this.props.match.params.id);
-  }
+  });
 
-  onChangeTitle = (e) => {
+  const onChangeTitle = (e) => {
     const title = e.target.value;
 
     this.setState(function(prevState) {
@@ -41,7 +31,7 @@ export default class Tutorial extends Component {
     });
   }
 
-  onChangeDescription = (e) => {
+  const onChangeDescription = (e) => {
     const description = e.target.value;
     
     this.setState(prevState => ({
@@ -52,7 +42,7 @@ export default class Tutorial extends Component {
     }));
   }
 
-  getTutorial = (id) => {
+  const getTutorial = (id) => {
     TutorialDataService.get(id)
       .then(response => {
         this.setState({
@@ -63,7 +53,7 @@ export default class Tutorial extends Component {
       });
   }
 
-  updatePublished = (status) => {
+  const updatePublished = (status) => {
     let data = {
       id: this.state.currentTutorial.id,
       title: this.state.currentTutorial.title,
@@ -84,7 +74,7 @@ export default class Tutorial extends Component {
       });
   }
 
-  updateTutorial = () => {
+  const updateTutorial = () => {
     TutorialDataService.update(
       this.state.currentTutorial.id,
       this.state.currentTutorial
@@ -98,7 +88,7 @@ export default class Tutorial extends Component {
       });
   }
 
-  deleteTutorial = () => {    
+  const deleteTutorial = () => {
     TutorialDataService.delete(this.state.currentTutorial.id)
       .then(response => {
         this.props.history.push('/tutorials')
@@ -107,48 +97,46 @@ export default class Tutorial extends Component {
       });
   }
 
-  render() {
-    const { currentTutorial } = this.state;
+  return (
+    <div>
+      {currentTutorial.id ? (
+        <div className="edit-form">
+          <h4>Hero</h4>
+          <form>
+            <div className="form-group">
+              <img src={currentTutorial.images.md} />
+            </div>
+            <div className="form-group">
+              <b htmlFor="title">Name</b>
+              <p>{currentTutorial.name}</p>
+            </div>
+            <div className="form-group">
+              <b htmlFor="description">Gender</b>
+              <p>{currentTutorial.appearance.gender}</p>
+            </div>
+            <div className="form-group">
+              <b htmlFor="description">Weight</b>
+              <p>{currentTutorial.appearance.weight.join(",")}</p>
+            </div>
 
-    return (
-      <div>
-        {currentTutorial.id ? (
-          <div className="edit-form">
-            <h4>Hero</h4>
-            <form>
-              <div className="form-group">
-                <img src={currentTutorial.images.md} />
-              </div>
-              <div className="form-group">
-                <b htmlFor="title">Name</b>
-                <p>{currentTutorial.name}</p>
-              </div>
-              <div className="form-group">
-                <b htmlFor="description">Gender</b>
-                <p>{currentTutorial.appearance.gender}</p>
-              </div>
-              <div className="form-group">
-                <b htmlFor="description">Weight</b>
-                <p>{currentTutorial.appearance.weight.join(",")}</p>
-              </div>
+            <div className="form-group">
+              <label>
+                <strong>Status:</strong>
+              </label>
+              {currentTutorial.published ? "Published" : "Pending"}
+            </div>
+          </form>
 
-              <div className="form-group">
-                <label>
-                  <strong>Status:</strong>
-                </label>
-                {currentTutorial.published ? "Published" : "Pending"}
-              </div>
-            </form>
-
-            <p>{this.state.message}</p>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on a Tutorial...</p>
-          </div>
-        )}
-      </div>
-    );
-  }
+          <p>{this.state.message}</p>
+        </div>
+      ) : (
+        <div>
+          <br />
+          <p>Please click on a Tutorial...</p>
+        </div>
+      )}
+    </div>
+  );
 }
+
+export default Tutorial;
